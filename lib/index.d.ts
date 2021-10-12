@@ -1,1 +1,37 @@
-export declare const Greeter: (name: string) => string;
+export declare class ModPlayer {
+    [x: string]: any;
+    supportedformats: string[];
+    url: string;
+    format: string;
+    state: string;
+    loading: boolean;
+    playing: boolean;
+    paused: boolean;
+    repeat: boolean;
+    separation: number;
+    mixval: number;
+    amiga500: boolean;
+    filter: boolean;
+    endofsong: boolean;
+    autostart: boolean;
+    bufferstodelay: number;
+    delayfirst: number;
+    onReady: () => void;
+    onPlay: () => void;
+    onStop: () => void;
+    buffer: number;
+    mixerNode: number;
+    context: null;
+    samplerate: number;
+    bufferlen: number;
+    chvu: Float32Array;
+    player: any;
+    title: string;
+    signature: string;
+    songlen: number;
+    channels: number;
+    patterns: number;
+    samplenames: string[];
+    private loadSuccess?;
+    load(url: string): boolean | undefined;
+}

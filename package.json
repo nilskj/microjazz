@@ -9,11 +9,9 @@
   ],
   "scripts": {
     "build": "tsc",
-    "format": "prettier --write \"src/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
     "prepare" : "npm run build",
-    "prepublishOnly" : "npm test && npm run lint",
-    "preversion" : "npm run lint",
     "version" : "npm run format && git add -A src",
     "postversion" : "git push && git push --tags"
   },
@@ -22,8 +20,8 @@
     "url": "git@github.com:nilskj/microjazz.git"
   },
   "keywords": ["module", "music", ".xm", ".mod", ".s3m", "player", "jazz"],
-  "author": "Nils Kjellman",
-  "license": "ISC",
+  "author": "Nils Kjellman, Noora Halme",
+  "license": "MIT",
   "devDependencies": {
     "prettier": "^2.4.1",
     "ts-jest": "^27.0.5",
