@@ -36,7 +36,7 @@ export class ModPlayer {
   onStop = function () {};
 
   buffer = 0;
-  mixerNode:ScriptProcessorNode = 0;
+  mixerNode:ScriptProcessorNode | null = null;
   context: AudioContext | null = null;
   samplerate = 44100;
   bufferlen = 4096;
@@ -285,7 +285,7 @@ export class ModPlayer {
     var i, c, patt;
     if (this.format=='mod') {
       patt=new Uint8Array(this.player.pattern_unpack[pn]);
-      for(var i=0;i<64;i++) for(c=0;c<this.player.channels;c++) {
+      for(let i=0; i<64; i++) for(c=0; c<this.player.channels; c++) {
         if (patt[i*5*this.channels+c*5+3]==0 && patt[i*5*this.channels+c*5+4]==0) {
           patt[i*5*this.channels+c*5+3]=0x2e;
         } else {
@@ -295,13 +295,13 @@ export class ModPlayer {
       }
     } else if (this.format=='s3m') {
       patt=new Uint8Array(this.player.pattern[pn]);
-      for(var i=0;i<64;i++) for(c=0;c<this.player.channels;c++) {
+      for(i = 0; i<64; i++) for(c=0; c<this.player.channels; c++) {
         if (patt[i*5*this.channels+c*5+3]==255) patt[i*5*this.channels+c*5+3]=0x2e;
         else patt[i*5*this.channels+c*5+3]+=0x40;
       }
     } else if (this.format=='xm') {
       patt=new Uint8Array(this.player.pattern[pn]);
-      for(var i=0;i<this.player.patternlen[pn];i++) for(c=0;c<this.player.channels;c++) {
+      for(i = 0; i<this.player.patternlen[pn]; i++) for(c=0; c<this.player.channels; c++) {
         if (patt[i*5*this.channels+c*5+0]<97)
           patt[i*5*this.channels+c*5+0]=(patt[i*5*this.channels+c*5+0]%12)|(Math.floor(patt[i*5*this.channels+c*5+0]/12)<<4);
         if (patt[i*5*this.channels+c*5+3]==255) patt[i*5*this.channels+c*5+3]=0x2e;
@@ -347,7 +347,7 @@ export class ModPlayer {
     if ( typeof AudioContext !== 'undefined') {
       this.context = new AudioContext();
     } else {
-      this.context = new webkitAudioContext();
+      //this.context = new webkitAudioContext();
     }
     if (this.context)
     {
@@ -367,14 +367,17 @@ export class ModPlayer {
       this.lowpassNode=this.context.createBiquadFilter();
       this.setfilter(this.filter);
 
-      // mixer
-      if ( typeof this.context.createJavaScriptNode === 'function') {
+      // mixer - to be converted into audio worklet?
+/*      if ( typeof this.context.createJavaScriptNode === 'function') {
         this.mixerNode=this.context.createJavaScriptNode(this.bufferlen, 1, 2);
       } else {
         this.mixerNode=this.context.createScriptProcessor(this.bufferlen, 1, 2);
-      }
+      }*/
+        this.mixerNode=this.context.createScriptProcessor(this.bufferlen, 1, 2);
+      // @ts-ignore
       this.mixerNode.module=this;
-      this.mixerNode.onaudioprocess=Modplayer.prototype.mix;
+      // @ts-ignore
+      this.mixerNode.onaudioprocess=this.mix;
 
       // patch up some cables :)
       this.mixerNode.connect(this.filterNode);
